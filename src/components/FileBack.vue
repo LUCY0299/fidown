@@ -15,7 +15,7 @@ import { defineEmits } from 'vue';
 // 定義 emit
 const emit = defineEmits(['updateProgress']);
 // 傳遞 emit 給 useBackFiles 函數
-const { downloadBackFiles,} = useBackFiles(emit);
+const { downloadBackFiles } = useBackFiles(emit);
 </script>
 
 <style scoped>

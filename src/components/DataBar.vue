@@ -1,29 +1,22 @@
 <template>
-    <div class="container">
-      <FileFront />
-      <FileBack @updateProgress="handleProgressUpdate"/>
-      <div class="Pcontainer">
-        <div class="progress">
-          <img src="@/assets/character.png" class="progress-image" :style= "{ left: progressWidth + '%' }" >
-          <div class="progress-value" :style="{ width: progressWidth + '%' }">
-            <span class="progress-text">{{ Math.floor(progressWidth) }}%</span>
-          </div>
-        </div>
+    <FileBack @updateProgress="handleProgressUpdate"/>
+    
+    <div class="Pcontainer">
+    <div class="progress">
+      <img src="@/assets/character.png" class="progress-image" :style= "{ left: progressWidth + '%' }" >
+      <div class="progress-value" :style="{ width: progressWidth + '%' }">
+        <span class="progress-text">{{ Math.floor(progressWidth) }}%</span>
       </div>
-
     </div>
+  </div>
 </template>
 
-<script setup>
-import FileFront from '@/components/FileFront.vue';
-import FileBack from '@/components/FileBack.vue';
 
+<script setup>
 import { ref } from 'vue';
 
 
 const progressWidth = ref(0)
-
-
 function smoothUpdate(progress) {
   let start = progressWidth.value || 0;
   let end = progress;
@@ -55,8 +48,6 @@ function handleProgressUpdate(progress){
 }
 
 </script>
-
-
 
 <style scoped>
 

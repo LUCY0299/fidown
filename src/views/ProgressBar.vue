@@ -5,7 +5,9 @@
   <div class="Pcontainer">
     <div class="progress">
       <img src="@/assets/character.png" class="progress-image" :style= "{ left: progressWidth + '%' }" >
-      <div class="progress-value" :style="{ width: progressWidth + '%' }"></div>
+      <div class="progress-value" :style="{ width: progressWidth + '%' }">
+        <span class="progress-text">{{ Math.floor(progressWidth) }}%</span>
+      </div>
     </div>
   </div>
 </template>
@@ -32,17 +34,19 @@ function smoothUpdate(progress) {
     const fraction = Math.min(elapsed / duration, 1);
 
     // 使用线性插值计算当前进度
-    progressWidth.value = start + (end - start) * fraction;
+    progressWidth.value = Math.floor(start + (end - start) * fraction);
 
     if (elapsed < duration) {
       requestAnimationFrame(update);
     }
+    
   }
 
   requestAnimationFrame(update);
 }
 
 function handleProgressUpdate(progress){
+  
   smoothUpdate(progress);
 }
 
@@ -77,15 +81,31 @@ function handleProgressUpdate(progress){
   background: #4638c2;
   height: 30px;
   width: 0;
-  transition: none;
+
+  position: relative; /* 定位相对，以便子元素可以正确定位 */
 }
 .progress-image{
   position: absolute;
   top: -50px; /* 根據需要調整，使圖片顯示在進度條上方 */
   left: 0; /* 初始位置 */
-  transition: none; /* 平滑過渡效果 */
+  animation: walking 0.5s ease-in-out infinite;
   width: 80px;
   height: auto;
 }
-
+.progress-text {
+  color: white; /* 文字顏色 */
+  position: absolute; /* 絕對定位 */
+  top: 50%; /* 垂直居中 */
+  left: 50%; /* 水平居中 */
+  transform: translate(-50%, -50%); /* 確保文字完全居中 */
+  user-select: none; /* 防止選中文字 */
+}
+/* @keyframes walking {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+} */
 </style>

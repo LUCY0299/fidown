@@ -37,15 +37,16 @@ export function useBackFiles(emit){
   const downloadBackFiles = async () => { 
     try{
       const response = await axios.get('http://localhost:3000/download-pdf' , {
-        responseType: 'blob',  //以Blob形式接收響應數據
+        responseType: 'blob',  //以二進制形式接收響應數據
         onDownloadProgress: progressEvent => {
             const total = progressEvent.total;
             const current = progressEvent.loaded;
             // 计算当前下载进度
             const progress = Math.floor((current / total) * 100);
             downloadProgress.value = progress;
-            // 發射事件，傳遞目前下載進度
-            emit('updateProgress' , progress);
+            /* console.log(progress); */
+            
+            emit('updateProgress' , progress);// 發射事件，傳遞目前下載進度
         }
   
       });

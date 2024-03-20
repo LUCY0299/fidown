@@ -17,40 +17,14 @@
 <script setup>
 import FileFront from '@/components/FileFront.vue';
 import FileBack from '@/components/FileBack.vue';
-
 import { ref } from 'vue';
 
 
 const progressWidth = ref(0)
 
-
-function smoothUpdate(progress) {
-  let start = progressWidth.value || 0;
-  let end = progress;
-  let duration = 500; // 动画持续时间，单位为毫秒
-  let startTime;
-
-  function update(time) {
-    if (startTime === undefined) {
-      startTime = time;
-    }
-    const elapsed = time - startTime;
-    const fraction = Math.min(elapsed / duration, 1);
-
-    // 使用线性插值计算当前进度
-    progressWidth.value = Math.floor(start + (end - start) * fraction);
-
-    if (elapsed < duration) {
-      requestAnimationFrame(update);
-    }
-    
-  }
-
-  requestAnimationFrame(update);
-}
-
+import { useSmoothUpdate } from '@/router/index.js';
+const { smoothUpdate } = useSmoothUpdate(progressWidth)
 function handleProgressUpdate(progress){
-  
   smoothUpdate(progress);
 }
 

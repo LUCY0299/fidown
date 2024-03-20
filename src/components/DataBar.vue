@@ -1,11 +1,12 @@
 <template>
+  <div class="container">
     <FileBack @updateProgress="handleProgressUpdate"/>
-    
     <div class="Pcontainer">
-    <div class="progress">
-      <img src="@/assets/character.png" class="progress-image" :style= "{ left: progressWidth + '%' }" >
-      <div class="progress-value" :style="{ width: progressWidth + '%' }">
-        <span class="progress-text">{{ Math.floor(progressWidth) }}%</span>
+      <div class="progress">
+        <img src="@/assets/character.png" class="progress-image" :style= "{ left: progressWidth + '%' }" >
+        <div class="progress-value" :style="{ width: progressWidth + '%' }">
+          <span class="progress-text">{{ Math.floor(progressWidth) }}%</span>
+        </div>
       </div>
     </div>
   </div>
@@ -13,37 +14,16 @@
 
 
 <script setup>
+
+import FileBack from '@/components/FileBack.vue';
+import { useSmoothUpdate } from '@/router/index.js';
 import { ref } from 'vue';
-
-
 const progressWidth = ref(0)
-function smoothUpdate(progress) {
-  let start = progressWidth.value || 0;
-  let end = progress;
-  let duration = 500; // 动画持续时间，单位为毫秒
-  let startTime;
 
-  function update(time) {
-    if (startTime === undefined) {
-      startTime = time;
-    }
-    const elapsed = time - startTime;
-    const fraction = Math.min(elapsed / duration, 1);
+const { smoothUpdate } =useSmoothUpdate(progressWidth)
 
-    // 使用线性插值计算当前进度
-    progressWidth.value = Math.floor(start + (end - start) * fraction);
-
-    if (elapsed < duration) {
-      requestAnimationFrame(update);
-    }
-    
-  }
-
-  requestAnimationFrame(update);
-}
 
 function handleProgressUpdate(progress){
-  
   smoothUpdate(progress);
 }
 

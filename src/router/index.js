@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import FileDownload from '../views/FileDownload.vue'
 import ProgressBar from '../views/ProgressBar.vue'
+import NewBar from '../views/NewBar.vue'
+import FileDrop from '../views/FileDrop.vue';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -9,11 +10,6 @@ import { ref } from 'vue';
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/FileDownload',
     name: 'FileDownload',
     component: FileDownload
   },
@@ -21,6 +17,16 @@ const routes = [
     path: '/ProgressBar',
     name: 'ProgressBar',
     component: ProgressBar
+  },
+  {
+    path: '/NewBar',
+    name: 'NewBar',
+    component: NewBar
+  },
+  {
+    path: '/FileDrop',
+    name: 'FileDrop',
+    component: FileDrop
   }
 ]
 
@@ -31,10 +37,17 @@ const router = createRouter({
 
 export default router
 
-export function useBackFiles(emit){
+export function useBackFiles(callbacks){
   const downloadProgress = ref(0);  //存文件下載進度%
 
-  const downloadBackFiles = async () => { 
+  async function downloadBackFiles() { 
+    // 直接調用回調函數而不是發射事件
+    if (callbacks && callbacks.resetProgress) {
+      callbacks.resetProgress();
+    }
+
+    downloadProgress.value = 0;
+
     const startTime = Date.now();  // 记录下载开始的时间
     
     try{
@@ -50,7 +63,16 @@ export function useBackFiles(emit){
 
           downloadProgress.value = progress;
           
-          emit('updateProgress' , { progress,Loaded,Total,Timer,Speed });// 發射事件，傳遞目前下載進度
+          // 直接調用回調函數來更新進度
+          if (callbacks && callbacks.updateProgress) {
+            callbacks.updateProgress({
+              progress: progress,
+              Loaded: Loaded,
+              Total: Total,
+              Timer: Timer,
+              Speed: Speed
+            });
+          }
         }
   
       });
@@ -67,39 +89,128 @@ export function useBackFiles(emit){
     catch (error) {
       console.error('Download error:', error);
     }
-    finally{
-      downloadProgress.value = 0;  // 下载完成后重置进度
-    }
-  };
-  return {downloadBackFiles};
+  }
+  return downloadBackFiles;
+}
+
+export async function downloadUploadFiles(callbacks) {
+  const downloadUrl = localStorage.getItem('downloadUrl');
+  const originalFilename = localStorage.getItem('originalFilename') || 'defaultFilename.pdf'; // 如果没有原始文件名，使用默认的
+  const { resetProgress, updateProgress } = callbacks;
+  
+  if (!downloadUrl) {
+    console.error('No download URL available');
+    resetProgress();
+    return;
+  }
+
+  resetProgress(); // 重置进度条
+
+  try {
+    const response = await axios.get(downloadUrl, {
+      responseType: 'blob', // 以二进制形式接收响应数据
+      onDownloadProgress: progressEvent => {
+        const total = progressEvent.total; // 文件总大小
+        const loaded = progressEvent.loaded; // 已下载大小
+        
+        const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
+        const startTime = Date.now(); // 记录下载开始的时间
+        const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
+        const speed = loaded / timer; // 计算当前下载速度(bytes per second)
+
+        // 调用回调函数来更新进度信息
+        updateProgress({
+          progress: progress,
+          Loaded: loaded,
+          Total: total,
+          Timer: timer,
+          Speed: speed
+        });
+      }
+    });
+
+    // 处理下载完成的文件
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', originalFilename);  //使用原始文件名
+    document.body.appendChild(link);
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+    link.remove();
+  } catch (error) {
+    console.error('Download error:', error);
+  }
 }
 
 
+
+
 /* pr:當前值, prto:即將過渡到的新值*/
-export function useSmoothUpdate(pr){
-  function smoothUpdate(prto) {
-    let start = pr.value || 0;  //pr.value是falsy值,=> 0
-    let end = prto;
-    let duration = 500;  //動畫持續時間,單位為毫秒
-    let startTime;       //動畫開始的具體時間點
-  
-    function update(time) {
-      if (startTime === undefined) {
-        startTime = time;
+export function smoothUpdate(pr,prto) {
+  let start = pr.value || 0;  //pr.value是falsy值,=> 0
+  let end = prto;
+  let duration = 500;  //動畫持續時間,單位為毫秒
+  let startTime;       //動畫開始的具體時間點
+
+  function update(time) {
+    if (startTime === undefined) {
+      startTime = time;
+    }
+    const elapsed = time - startTime;  //動畫開始到目前影格的時間差
+    const fraction = Math.min(elapsed / duration, 1);  //動畫目前的完成進度比例,時間差與動畫總持續時間的比值,不超過1
+
+    // 使用線性內插法計算當前進度
+    pr.value = Math.floor(start + (end - start) * fraction);
+
+      //動畫未完成繼續遞迴
+    if (elapsed < duration) {  
+      requestAnimationFrame(update);  //requestAnimationFrame用法 =>向瀏覽器請求在下次重繪前呼叫這個動畫函數
+    }
+  }
+  //進行下一幀
+  requestAnimationFrame(update);
+}
+
+export const fileDropHandlers = {
+  // 處理 drop 事件 event對象
+  handleDrop(active, emit) {
+    return async function(event) {
+      active.value = !active.value; // 切換激活狀態
+      if (event.dataTransfer.files.length) {
+        const file = event.dataTransfer.files[0];
+        emit('fileDropped', file);
+        await uploadFileToServer(file);  //上傳該檔案
       }
-      const elapsed = time - startTime;  //動畫開始到目前影格的時間差
-      const fraction = Math.min(elapsed / duration, 1);  //動畫目前的完成進度比例,時間差與動畫總持續時間的比值,不超過1
-  
-      // 使用線性內插法計算當前進度
-      pr.value = Math.floor(start + (end - start) * fraction);
-  
-       //動畫未完成繼續遞迴
-      if (elapsed < duration) {  
-        requestAnimationFrame(update);  //requestAnimationFrame用法 =>向瀏覽器請求在下次重繪前呼叫這個動畫函數
+      active.value = !active.value;
+    }
+  },
+  // 選擇文件時觸發
+  onFileChange(emit) {
+    return async function(event) {
+      if (event.target.files.length) {
+        const file = event.target.files[0];
+        emit('fileDropped', file);
+        await uploadFileToServer(file);  //上傳該檔案
       }
     }
-    //進行下一幀
-    requestAnimationFrame(update);
   }
-  return { smoothUpdate };   //外部元件就可以透過解構這個函數來使用
+};
+async function uploadFileToServer(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const response = await axios.post('http://localhost:3000/upload-file', formData);
+    if (response.data && response.data.downloadUrl) {
+      // 假设使用 localStorage 来保存下载 URL
+      localStorage.setItem('downloadUrl', response.data.downloadUrl);
+      localStorage.setItem('originalFilename', response.data.originalFilename);
+      console.log('File uploaded successfully, download URL saved.');
+    } else {
+      console.error('Upload failed or download URL missing');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }

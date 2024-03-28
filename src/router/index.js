@@ -104,6 +104,7 @@ export async function downloadUploadFiles(callbacks) {
     return;
   }
 
+  const startTime = Date.now(); // 记录下载开始的时间
   resetProgress(); // 重置进度条
 
   try {
@@ -114,7 +115,7 @@ export async function downloadUploadFiles(callbacks) {
         const loaded = progressEvent.loaded; // 已下载大小
         
         const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
-        const startTime = Date.now(); // 记录下载开始的时间
+        
         const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
         const speed = loaded / timer; // 计算当前下载速度(bytes per second)
 

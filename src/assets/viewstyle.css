@@ -6,9 +6,6 @@
     margin: 0 auto;
     padding: 0 1rem;
 }
-  
-  
-
 .btn-11 {
 position: relative;
 display: block;
@@ -28,9 +25,6 @@ display: flex;
 justify-content: center;
 align-items: center;
 }
-
-
-
 
 .btn-11:before,
 .btn-11:after {
@@ -100,64 +94,7 @@ animation-direction: alternate;
 }
 }
 
-/* circleBar */
-.circle {
-display:flex;
-justify-content: center;
-}
-
-.RadialProgress {
---hue: 220;       /*進度條色調*/
---holesize: 60%;  /* 進度條寬度 */
---track-bg: hsl(233 34% 92%);  /*進度條背景顏色*/
-
-block-size: 40vmin;       /* 设置进度条的尺寸 */
-inline-size: 40vmin;
-min-inline-size: 90px;
-min-block-size: 90px;
-display: grid;            /*  CSS Grid 布局将内容居中 */
-place-items: center;
-
-position: relative;
-font-weight: 700;
-font-size: max(6.5vmin, 1.4rem);
-
-&::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: 50%;
-    z-index: -1;
-    background: conic-gradient(       /* 圆锥渐变创建圆形进度的效果 */
-    hsl(var(--hue) 100% 70%),
-    hsl(var(--hue) 100% 40%),
-    hsl(var(--hue) 100% 70%) var(--schedule, 0%),
-    var(--track-bg) var(--schedule, 0%) 100%
-    );
-    
-    mask-image: radial-gradient(      /* 中心空白圓環 */
-    transparent var(--holesize),    /*中心*/
-    black calc(var(--holesize) + 0.5px)  /*外圍*/
-    );
-}
-}
-/* download-info */
-.download-info{
-text-align: center;
-margin-top: 20px;
-}
-.download-info li{
-border-top: 1px solid #ddd;
-padding: 10px 0;
-    &:first-child{
-    border: none;
-    }
-}
-
-
+/* DataBar */
 .Pcontainer{
   display: flex;
   justify-content: center;
@@ -206,7 +143,6 @@ padding: 10px 0;
 }
 
 /* lineBar */
-
 .Pcontainer{
     display: flex;
     justify-content: center;
@@ -253,3 +189,153 @@ padding: 10px 0;
     transform: translate(-50%, -50%); /* 確保文字完全居中 */
     user-select: none; /* 防止選中文字 */
   }
+
+/* circleBar */
+.circle {
+display:flex;
+justify-content: center;
+}
+
+.RadialProgress {
+--hue: 215;       /*進度條色調*/
+--holesize: 60%;  /* 進度條寬度 */
+--track-bg: hsl(233 34% 92%);  /*進度條背景顏色*/
+
+block-size: 40vmin;       /* 设置进度条的尺寸 */
+inline-size: 40vmin;
+min-inline-size: 90px;
+min-block-size: 90px;
+display: grid;            /*  CSS Grid 布局将内容居中 */
+place-items: center;
+
+position: relative;
+font-weight: 700;
+font-size: max(6.5vmin, 1.4rem);
+
+&::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 50%;
+    z-index: -1;
+    background: conic-gradient(       /* 圆锥渐变创建圆形进度的效果 */
+    hsl(var(--hue) 100% 70%),
+    hsl(var(--hue) 100% 40%),
+    hsl(var(--hue) 100% 70%) var(--schedule, 0%),
+    var(--track-bg) var(--schedule, 0%) 100%
+    );
+    
+    mask-image: radial-gradient(      /* 中心空白圓環 */
+    transparent var(--holesize),    /*中心*/
+    black calc(var(--holesize) + 0.5px)  /*外圍*/
+    );
+}
+}
+/* download-info */
+.download-info{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 100px;
+}
+.download-info li {
+  position: relative; /* 使得伪元素可以相对于此元素定位 */
+  padding: 10px 0;
+}
+
+.download-info li::before {
+  content: ''; 
+  position: absolute;
+  left: 35%; 
+  right: 35%; 
+  top: 0; 
+  border-top: 2px solid #ddddddd7; /* 边框样式 */
+}
+
+.download-info li:first-child::before {
+  border-top: none; /* 第一个元素不显示顶部边框 */
+}
+
+  /* wave part */
+footer {
+  width:100vw;
+  position:fixed;
+  bottom:0px
+}
+svg {
+  width:100%;
+  height: auto;
+}
+.topball-img {
+  animation: ball 1.5s ease-in-out infinite alternate 0.3s;
+  animation-iteration-count:infinite;
+  animation-direction: alternate;
+  animation-delay: 0.3s;
+  cursor: pointer;
+}
+.wave {
+  animation: wave 3s linear;
+  animation-iteration-count:infinite;
+  fill: #4478e3;
+}
+.drop {
+  fill: transparent;
+  animation: drop 5s ease infinite normal;
+  stroke: #4478e3;
+  stroke-width:0.5;
+  opacity:.6; 
+  transform: translateY(80%);
+}
+.drop1 {
+  transform-origin: 20px 3px;
+}
+.drop2 {
+  animation-delay: 3s;
+  animation-duration:3s;
+  transform-origin: 25px 3px;
+}
+.drop3 {
+  animation-delay: -2s;
+  animation-duration:3.4s;
+  transform-origin: 16px 3px;
+}
+.gooeff {
+  filter: url(#goo);
+}
+#wave2 {
+  animation-duration:5s;
+  animation-direction: reverse;
+  opacity:.6;
+}
+#wave3 {
+  animation-duration: 7s;
+  opacity:.3;
+}
+@keyframes drop {
+  0% {
+    transform: translateY(80%); 
+    opacity:.6; 
+  }
+  80% {
+    transform: translateY(80%); 
+    opacity:.6; 
+  }
+  90% { 
+    transform: translateY(10%) ; /*上升到原位置的10%的垂直位置*/
+    opacity:.6; 
+  }
+  100% { 
+    transform: translateY(0%) scale(1.5);
+    stroke-width:0.2;  /*描边*/
+    opacity:0; 
+  }
+}
+@keyframes wave {
+  to {transform: translateX(-100%);}  /*向左100%*/
+}
+@keyframes ball {
+  to {transform: translateY(20%);}   /*向上移动20%*/
+}
+

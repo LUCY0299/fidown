@@ -39,39 +39,6 @@ const downloadBackFiles = useBackFiles({
 </script>
 
 <style scoped>
-.wrap{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-
-
-.btn-11 {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  width: 190px;
-  height: 60px;
-  max-width: 250px;
-  margin: 1rem auto;
-  border: 2px solid rgba(186, 196, 199, 0.822);
-  border-radius: 35px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  text-decoration: none;
-  font-weight: bold;
-  color: #4638c2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-
-
 .btn-11:before,
 .btn-11:after {
   content: '';

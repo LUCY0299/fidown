@@ -68,39 +68,15 @@
 
 <script setup>
 import "@/assets/viewstyle.css";
-import { onMounted,ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRoute } from "vue-router";
-import { useBackFiles ,smoothUpdate} from '@/router/index.js';
-//@=src
+import { useBackFiles } from '@/router/index.js';
+import { schedule, loaded, total, timer, speed, resetProgress, updateProgress } from '@/router/index.js';
+
 const route = useRoute();
 
-const schedule = ref(0); //用來存進度條進度
-const loaded = ref(0);
-const total = ref(0);
-const timer = ref(0);
-const speed = ref(0);
-
-/* schedule.value=0; */
-function setReset(){
-  schedule.value = 0;
-  loaded.value = 0;
-  total.value = 0;
-  timer.value = 0;
-  speed.value = 0;
-}
-                      //避免重名
-function setProgress({ progress: newProgress,Loaded,Total,Timer,Speed }) {
-  /* progress.value = newProgress;   不直接更新值 */   
-  smoothUpdate( schedule, newProgress);  // 使用smoothUpdate方法来更新进度
-  loaded.value= Loaded;
-  total.value = Total;
-  timer.value = Timer;
-  speed.value = Speed;
-}
-const downloadBackFiles = useBackFiles({
-  resetProgress: setReset,
-  updateProgress: setProgress,
-});
+// 直接使用返回的函数
+const downloadBackFiles = useBackFiles({ resetProgress, updateProgress });
 
 onMounted(() => {
     // 檢查URL參數是否指定了startDownload

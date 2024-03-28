@@ -20,12 +20,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useBackFiles } from '@/router/index.js';
-import { smoothUpdate } from '@/router/index.js';
+
 
 const progressWidth = ref(0)
 
 function setProgress({ progress }){
-  smoothUpdate(progressWidth,progress);
+  progressWidth.value= progress;
 }
 
 function setReset(){

@@ -37,113 +37,65 @@ const router = createRouter({
 
 export default router
 
-/* ProgressBar下載檔案 */
-export function useBackFiles(callbacks){
-  const downloadProgress = ref(0);  //存文件下載進度%
-
-  async function downloadBackFiles() { 
-    // 直接調用回調函數而不是發射事件
-    if (callbacks && callbacks.resetProgress) {
-      callbacks.resetProgress();
-    }
-
-    downloadProgress.value = 0;
-
-    const startTime = Date.now();  // 记录下载开始的时间
-    
-    try{
-      const response = await axios.get('http://localhost:3000/download-pdf' , {
-        responseType: 'blob',  //以二進制形式接收響應數據
-        onDownloadProgress: progressEvent => {
-          const Total = progressEvent.total;
-          const Loaded = progressEvent.loaded;
-          
-          const progress = Math.floor((Loaded / Total) * 100); // 计算当前下载进度
-          const Timer = ( Date.now()- startTime ) /1000;   // 计算经过时间(秒)
-          const Speed = Total /  Timer;   // 计算当前下载速度(bytes per second)
-
-          downloadProgress.value = progress;
-          
-          // 直接調用回調函數來更新進度
-          if (callbacks && callbacks.updateProgress) {
-            callbacks.updateProgress({
-              progress: progress,
-              Loaded: Loaded,
-              Total: Total,
-              Timer: Timer,
-              Speed: Speed
-            });
-          }
-        }
-  
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));  //建立一個指向下載資料的URL
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download','MIS.pdf');
-      document.body.appendChild(link)
-      link.click()
-  
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-    }  
-    catch (error) {
-      console.error('Download error:', error);
-    }
-  }
-  return downloadBackFiles;
-}
-
-/* NewBar下載檔案 */
-export async function downloadUploadFiles(callbacks) {
-  const downloadUrl = localStorage.getItem('downloadUrl');
-  const originalFilename = localStorage.getItem('originalFilename') || 'defaultFilename.pdf'; // 如果没有原始文件名，使用默认的
+// 通用的下载功能
+export async function handleDownload({ url, filename, callbacks }) {
   const { resetProgress, updateProgress } = callbacks;
-  
-  if (!downloadUrl) {
-    console.error('No download URL available');
+
+  if (!url) {
+    console.error('Download URL is not provided');
     resetProgress();
     return;
   }
 
-  const startTime = Date.now(); // 记录下载开始的时间
-  resetProgress(); // 重置进度条
+  const startTime = Date.now();
+  resetProgress();
 
   try {
-    const response = await axios.get(downloadUrl, {
-      responseType: 'blob', // 以二进制形式接收响应数据
+    const response = await axios.get(url, {
+      responseType: 'blob',
       onDownloadProgress: progressEvent => {
-        const total = progressEvent.total; // 文件总大小
-        const loaded = progressEvent.loaded; // 已下载大小
-        const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
-        const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
-        const speed = loaded / timer; // 计算当前下载速度(bytes per second)
+        const total = progressEvent.total;
+        const loaded = progressEvent.loaded;
+        const progress = Math.floor((loaded / total) * 100);// 计算当前下载进度
+        const timer = (Date.now() - startTime) / 1000;// 计算经过时间(秒)
+        const speed = loaded / timer;// 计算当前下载速度(bytes per second)
 
-        // 调用回调函数来更新进度信息
-        updateProgress({
-          progress: progress,
-          Loaded: loaded,
-          Total: total,
-          Timer: timer,
-          Speed: speed
-        });
-      }
+        updateProgress({ progress, loaded, total, timer, speed });
+      },
     });
 
-    // 处理下载完成的文件
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', originalFilename);  //使用原始文件名
+    link.href = downloadUrl;
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
 
-    window.URL.revokeObjectURL(url);
-    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(link);
   } catch (error) {
     console.error('Download error:', error);
   }
 }
+
+/* ProgressBar下載檔案 */
+export function useBackFiles(callbacks){
+  // 下載文件的 URL 和預期的文件名
+  const url = 'http://localhost:3000/download-pdf';
+  const filename = 'MIS.pdf';
+
+  // 返回一個函數，當調用時執行下載
+  return () => handleDownload({ url, filename, callbacks });
+}
+
+/* NewBar下載檔案 */
+export function downloadUploadFiles(callbacks) {
+  // 從 localStorage 獲取下載文件的 URL 和原始文件名
+  const url = localStorage.getItem('downloadUrl');
+  const filename = localStorage.getItem('originalFilename') || 'defaultFilename.pdf';// 如果没有原始文件名，使用默认的
+  return () => handleDownload({ url, filename, callbacks });
+}
+
 /* UpFile上傳並獲取info */
 async function uploadFileToServer(file, callbacks) {
   const formData = new FormData();
@@ -215,28 +167,27 @@ export function onFileChange(emit, callbacks) {
   }
 }
 
+// 初始化状态
+export const schedule = ref(0);
+export const loaded = ref(0);
+export const total = ref(0);
+export const timer = ref(0);
+export const speed = ref(0);
 
-export function smoothUpdate(pr,prto) {        // pr:當前值, prto:即將過渡到的新值
-  let start = pr.value || 0;  //pr.value是falsy值,=> 0
-  let end = prto;
-  let duration = 500;  //動畫持續時間,單位為毫秒
-  let startTime;       //動畫開始的具體時間點
+// 重置进度和其他状态的函数
+export function resetProgress() {
+  schedule.value = 0;
+  loaded.value = 0;
+  total.value = 0;
+  timer.value = 0;
+  speed.value = 0;
+}
 
-  function update(time) {
-    if (startTime === undefined) {
-      startTime = time;
-    }
-    const elapsed = time - startTime;  //動畫開始到目前影格的時間差
-    const fraction = Math.min(elapsed / duration, 1);  //動畫目前的完成進度比例,時間差與動畫總持續時間的比值,不超過1
-
-    // 使用線性內插法計算當前進度
-    pr.value = Math.floor(start + (end - start) * fraction);
-
-      //動畫未完成繼續遞迴
-    if (elapsed < duration) {  
-      requestAnimationFrame(update);  //requestAnimationFrame用法 =>向瀏覽器請求在下次重繪前呼叫這個動畫函數
-    }
-  }
-  //進行下一幀
-  requestAnimationFrame(update);
+// 更新进度和其他状态的函数
+export function updateProgress({ progress, loaded: l, total: t, timer: tm, speed: s }) {
+  schedule.value = progress;
+  loaded.value = l;
+  total.value = t;
+  timer.value = tm;
+  speed.value = s;
 }

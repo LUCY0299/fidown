@@ -24,7 +24,7 @@
 /* import "@/assets/viewstyle.css"; */
 import { ref, defineEmits } from "vue"
 import { handleDrop,onFileChange } from '@/router/index.js';
-
+import { loaded, total, timer, speed, resetProgress, updateProgress } from '@/router/index.js';
 
 const active = ref(false)    //追蹤拖拽區域是否激活
 const emit = defineEmits(['fileDropped'])
@@ -33,34 +33,25 @@ const toggleActive = () => {
     active.value = !active.value  //true
 }
 
-// 定义状态
-const progress = ref(0);
-const loaded = ref(0);
-const total = ref(0);
-const timer = ref(0);
-const speed = ref(0);
-
-// 定义回调函数
-function resetProgress() {
-  progress.value = 0;
-  loaded.value = 0;
-  total.value = 0;
-  timer.value = 0;
-  speed.value = 0;
-}
-
-function updateProgress({ progress: p, loaded: l, total: t, timer: tm, speed: s }) {
-  progress.value = p;
-  loaded.value = l;
-  total.value = t;
-  timer.value = tm;
-  speed.value = s;
-}
 
 const callbacks = { resetProgress, updateProgress , startTime: Date.now()};
 const handleDropFunc = handleDrop(active, emit, callbacks);
 const onFileChangeFunc = onFileChange(emit, callbacks);
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style scoped>
 .dropzone{

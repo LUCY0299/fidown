@@ -37,6 +37,7 @@ const router = createRouter({
 
 export default router
 
+/* ProgressBar下載檔案 */
 export function useBackFiles(callbacks){
   const downloadProgress = ref(0);  //存文件下載進度%
 
@@ -93,6 +94,7 @@ export function useBackFiles(callbacks){
   return downloadBackFiles;
 }
 
+/* NewBar下載檔案 */
 export async function downloadUploadFiles(callbacks) {
   const downloadUrl = localStorage.getItem('downloadUrl');
   const originalFilename = localStorage.getItem('originalFilename') || 'defaultFilename.pdf'; // 如果没有原始文件名，使用默认的
@@ -113,9 +115,7 @@ export async function downloadUploadFiles(callbacks) {
       onDownloadProgress: progressEvent => {
         const total = progressEvent.total; // 文件总大小
         const loaded = progressEvent.loaded; // 已下载大小
-        
         const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
-        
         const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
         const speed = loaded / timer; // 计算当前下载速度(bytes per second)
 
@@ -144,12 +144,79 @@ export async function downloadUploadFiles(callbacks) {
     console.error('Download error:', error);
   }
 }
+/* UpFile上傳並獲取info */
+async function uploadFileToServer(file, callbacks) {
+  const formData = new FormData();
+  formData.append('file', file);
+  // 重置进度信息
+  if (callbacks && callbacks.resetProgress) {
+    callbacks.resetProgress();
+  }
+  const startTime = Date.now();
+  try {
+    const response = await axios.post('http://localhost:3000/upload-file', formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: progressEvent => {
+        const total = progressEvent.total; // 文件总大小
+        const loaded = progressEvent.loaded; // 已下载大小
+        const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
+        const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
+        const speed = loaded / timer; 
+        
+        // 更新进度信息
+        if (callbacks && callbacks.updateProgress) {
+          callbacks.updateProgress({
+            progress,
+            loaded,
+            total,
+            timer,
+            speed,
+          });
+        }
+      }
+    });
+    if (response.data && response.data.downloadUrl) {
+      // 假设使用 localStorage 来保存下载 URL
+      localStorage.setItem('downloadUrl', response.data.downloadUrl);
+      localStorage.setItem('originalFilename', response.data.originalFilename);
+      console.log('File uploaded successfully, download URL saved.');
+    } else {
+      console.error('Upload failed or download URL missing');
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+}
+
+/*----------- UpFile動作觸發上傳 ------------*/
+
+  // 處理 drop 事件 event對象
+export function handleDrop(active, emit ,callbacks) {
+  return async function(event) {
+    active.value = !active.value; // 切換激活狀態
+    if (event.dataTransfer.files.length) {
+      const file = event.dataTransfer.files[0];
+      emit('fileDropped', file);
+      await uploadFileToServer(file, callbacks);  //上傳該檔案
+    }
+    active.value = !active.value;
+  }
+}
+  // 選擇文件時觸發
+export function onFileChange(emit, callbacks) {
+  return async function(event) {
+    if (event.target.files.length) {
+      const file = event.target.files[0];
+      emit('fileDropped', file);
+      await uploadFileToServer(file, callbacks);  //上傳該檔案
+    }
+  }
+}
 
 
-
-
-/* pr:當前值, prto:即將過渡到的新值*/
-export function smoothUpdate(pr,prto) {
+export function smoothUpdate(pr,prto) {        // pr:當前值, prto:即將過渡到的新值
   let start = pr.value || 0;  //pr.value是falsy值,=> 0
   let end = prto;
   let duration = 500;  //動畫持續時間,單位為毫秒
@@ -172,46 +239,4 @@ export function smoothUpdate(pr,prto) {
   }
   //進行下一幀
   requestAnimationFrame(update);
-}
-
-export const fileDropHandlers = {
-  // 處理 drop 事件 event對象
-  handleDrop(active, emit) {
-    return async function(event) {
-      active.value = !active.value; // 切換激活狀態
-      if (event.dataTransfer.files.length) {
-        const file = event.dataTransfer.files[0];
-        emit('fileDropped', file);
-        await uploadFileToServer(file);  //上傳該檔案
-      }
-      active.value = !active.value;
-    }
-  },
-  // 選擇文件時觸發
-  onFileChange(emit) {
-    return async function(event) {
-      if (event.target.files.length) {
-        const file = event.target.files[0];
-        emit('fileDropped', file);
-        await uploadFileToServer(file);  //上傳該檔案
-      }
-    }
-  }
-};
-async function uploadFileToServer(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  try {
-    const response = await axios.post('http://localhost:3000/upload-file', formData);
-    if (response.data && response.data.downloadUrl) {
-      // 假设使用 localStorage 来保存下载 URL
-      localStorage.setItem('downloadUrl', response.data.downloadUrl);
-      localStorage.setItem('originalFilename', response.data.originalFilename);
-      console.log('File uploaded successfully, download URL saved.');
-    } else {
-      console.error('Upload failed or download URL missing');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
 }

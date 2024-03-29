@@ -1,14 +1,24 @@
 <template>
-  <nav>
-    <router-link to="/">FileDownload</router-link> |
+  <NavigaTion/> <router-view/>
+
+   <!--  <router-link to="/">FileDownload</router-link> |
     <router-link to="/ProgressBar">ProgressBar</router-link> |
     <router-link to="/NewBar">NewBar</router-link> |
-    <router-link to="/FileDrop">FileDrop</router-link>
-  </nav>
-  <router-view/>
-</template>
+    <router-link to="/FileDrop">FileDrop</router-link> -->
 
+  
+</template>
+<script>
+import NavigaTion from "./components/NavigaTion";
+export default{
+  name: 'App',
+  components:{
+    NavigaTion,
+  }
+};
+</script>
 <style lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap");
 *{
   margin: 0;
   padding: 0;
@@ -35,4 +45,5 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
 </style>

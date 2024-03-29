@@ -8,7 +8,6 @@
 </template>
 
 <script setup>
-import "@/assets/viewstyle.css";
 import FileFront from '@/components/FileFront.vue';
 import DataBar from '@/components/DataBar.vue';
 
@@ -19,3 +18,14 @@ function toProgressBar(){
   router.push({ path: '/ProgressBar', query:{ startDownload:'true' } });
 }
 </script>
+
+<style scoped>
+.container {
+  height:100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+}
+</style>

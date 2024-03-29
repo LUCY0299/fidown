@@ -21,7 +21,6 @@
 </template>
 
 <script setup>
-/* import "@/assets/viewstyle.css"; */
 import { ref, defineEmits } from "vue"
 import { handleDrop,onFileChange } from '@/router/index.js';
 import { loaded, total, timer, speed, resetProgress, updateProgress } from '@/router/index.js';
@@ -38,20 +37,6 @@ const callbacks = { resetProgress, updateProgress , startTime: Date.now()};
 const handleDropFunc = handleDrop(active, emit, callbacks);
 const onFileChangeFunc = onFileChange(emit, callbacks);
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style scoped>
 .dropzone{

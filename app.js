@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// 假设您的PDF文件存储在项目的public/files目录下
+// 假设您的PDF文件存储在项目的src/assets目录下
 const pdfPath = path.join(__dirname, 'src', 'assets', 'MIS.pdf');
 
 //get請求服務器發送本機檔案

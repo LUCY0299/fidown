@@ -29,29 +29,29 @@
 
 
       <div class="icon" v-if="mobile" @click="toggleMobileNav">
-        <i class="fas fa-bars" :class="{ 'icon-active': mobileNav }"></i>
+        <i class="fa-solid fa-bars" style="color: #000000;" :class="{ 'icon-active': mobileNav }"></i>
       </div>
 
 
       <transition name="mobile-nav">
         <ul v-show="mobileNav" class="dropdown-nav">
           <li :class="{ active: currentRouteName === 'FileDownload'}">
-          <router-link class="link" :to="{ name: 'FileDownload' }">
+          <router-link class="link" :to="{ name: 'FileDownload' }" @click="toggleMobileNav">
             <i class="fa-solid fa-download fa-fade"></i>FileDownload
           </router-link>
         </li>
         <li :class="{ active: currentRouteName === 'ProgressBar'}">
-          <router-link class="link" :to="{ name: 'ProgressBar' }">
+          <router-link class="link" :to="{ name: 'ProgressBar' }" @click="toggleMobileNav">
             <i class="fa-solid fa-tags fa-fade"></i>ProgressBar
           </router-link>
         </li>
         <li :class="{ active: currentRouteName === 'NewBar'}">
-          <router-link class="link" :to="{ name: 'NewBar' }">
+          <router-link class="link" :to="{ name: 'NewBar' }" @click="toggleMobileNav">
             <i class="fa-solid fa-right-to-bracket fa-fade"></i>NewBar
           </router-link>
         </li>
         <li :class="{ active: currentRouteName === 'FileDrop'}">
-          <router-link class="link" :to="{ name: 'FileDrop' }">
+          <router-link class="link" :to="{ name: 'FileDrop' }" @click="toggleMobileNav">
             <i class="fa-solid fa-arrow-up-from-bracket fa-fade"></i>FileDrop
           </router-link>
         </li>

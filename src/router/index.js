@@ -144,25 +144,27 @@ async function uploadFileToServer(file, callbacks) {
 
 /*----------- UpFile動作觸發上傳 ------------*/
 
-  // 處理 drop 事件 event對象
+  // 處理drop事件event對象
 export function handleDrop(active, emit ,callbacks) {
   return async function(event) {
-    active.value = !active.value; // 切換激活狀態
+    active.value = !active.value; 
     if (event.dataTransfer.files.length) {
       const file = event.dataTransfer.files[0];
       emit('fileDropped', file);
-      await uploadFileToServer(file, callbacks);  //上傳該檔案
+      await uploadFileToServer(file, callbacks);  
     }
     active.value = !active.value;
   }
 }
+
+// 切換狀態
   // 選擇文件時觸發
 export function onFileChange(emit, callbacks) {
   return async function(event) {
     if (event.target.files.length) {
       const file = event.target.files[0];
       emit('fileDropped', file);
-      await uploadFileToServer(file, callbacks);  //上傳該檔案
+      await uploadFileToServer(file, callbacks);
     }
   }
 }

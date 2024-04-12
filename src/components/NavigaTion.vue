@@ -90,8 +90,19 @@ const toggleMobileNav = () => mobileNav.value = !mobileNav.value;
 const currentRouteName = computed(() => route.name);
 </script>
 
-<style lang="scss" scoped>
 
+
+
+
+
+
+
+
+
+
+
+
+<style lang="scss" scoped>
 header{
   background-color: rgba(138, 168, 194, 0.685);
   z-index: 99;

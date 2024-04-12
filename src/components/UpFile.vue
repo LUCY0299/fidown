@@ -1,16 +1,21 @@
 <template>
     <h1>UploadFile...</h1>
-    <div @dragenter.prevent="toggleActive" 
-         @dragleave.prevent="toggleActive"
-         @dragover.prevent            
-         @drop.prevent="handleDropFunc"
-         :class="{ 'active-dropzone': active }"         
-         class="dropzone">
+    <div 
+        @dragenter.prevent="toggleActive" 
+        @dragleave.prevent="toggleActive"
+        @dragover.prevent            
+        @drop.prevent="handleDropFunc"
+        :class="{ 'active-dropzone': active }"         
+        class="dropzone">
+
         <span>Drag or Drop File</span>
         <span>OR</span>
         <label for="dropzoneFile">Select File</label>
-        <input type="file" id="dropzoneFile" class="dropzoneFile" @change="onFileChangeFunc"/>
-    </div>                                                       <!-- 用戶選擇文件後觸發 -->                 
+        <input type="file" id="dropzoneFile" 
+        class="dropzoneFile" 
+        @change="onFileChangeFunc"/>
+    </div>                                                      
+                                                                 <!-- 用戶選擇文件後觸發 -->                 
 
     <div class="download-info">
         <li><b>Loaded:</b> {{ (loaded / 1000 / 1000).toFixed(2) }} MB</li>
@@ -25,13 +30,13 @@ import { ref, defineEmits } from "vue"
 import { handleDrop,onFileChange } from '@/router/index.js';
 import { loaded, total, timer, speed, resetProgress, updateProgress } from '@/router/index.js';
 
-const active = ref(false)    //追蹤拖拽區域是否激活
+  //追蹤拖拽區域是否激活
 const emit = defineEmits(['fileDropped'])
 
+const active = ref(false)  
 const toggleActive = () => {
     active.value = !active.value  //true
 }
-
 
 const callbacks = { resetProgress, updateProgress , startTime: Date.now()};
 const handleDropFunc = handleDrop(active, emit, callbacks);

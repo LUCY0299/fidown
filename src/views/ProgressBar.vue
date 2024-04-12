@@ -272,8 +272,8 @@ animation-direction: alternate;
 .download-info li::before {
   content: ''; 
   position: absolute;
-  left: 35%; 
-  right: 35%; 
+  left: 0%; 
+  right: 0%; 
   top: 0; 
   border-top: 2px solid #ddddddd7; /* 边框样式 */
 }

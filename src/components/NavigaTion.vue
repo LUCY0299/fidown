@@ -158,7 +158,7 @@ header{
       
       transition: background-color 0.3s ease, color 0.3s ease;
       &:hover {
-        background-color: #062a3f91;
+        background-color: #062a3f91;/* 防止選中文字 */
         color: #fff; 
         border-radius: 8px;
         

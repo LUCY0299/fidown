@@ -56,10 +56,9 @@ export async function handleDownload({ url, filename, callbacks }) {
       onDownloadProgress: progressEvent => {
         const total = progressEvent.total;
         const loaded = progressEvent.loaded;
-        const progress = Math.floor((loaded / total) * 100);// 计算当前下载进度
-        const timer = (Date.now() - startTime) / 1000;// 计算经过时间(秒)
-        const speed = loaded / timer;// 计算当前下载速度(bytes per second)
-
+        const progress = Math.floor((loaded / total) * 100);// 下載進度
+        const timer = (Date.now() - startTime) / 1000;// 經過時間
+        const speed = loaded / timer;  //下載速度
         updateProgress({ progress, loaded, total, timer, speed });
       },
     });
@@ -80,9 +79,9 @@ export async function handleDownload({ url, filename, callbacks }) {
 
 /* ProgressBar下載檔案 */
 export function useBackFiles(callbacks){
-  // 下載文件的 URL 和預期的文件名
+  // 下載文件的URL
   const url = 'http://localhost:3000/download-pdf';
-  const filename = 'MIS.pdf';
+  const filename = 'algorithms.pdf';
 
   // 返回一個函數，當調用時執行下載
   return () => handleDownload({ url, filename, callbacks });
@@ -111,13 +110,13 @@ async function uploadFileToServer(file, callbacks) {
         'Content-Type': 'multipart/form-data',
       },
       onUploadProgress: progressEvent => {
-        const total = progressEvent.total; // 文件总大小
-        const loaded = progressEvent.loaded; // 已下载大小
-        const progress = Math.floor((loaded / total) * 100); // 计算当前下载进度
-        const timer = (Date.now() - startTime) / 1000; // 计算经过时间(秒)
+        const total = progressEvent.total;  //文件總大小
+        const loaded = progressEvent.loaded; //已下載大小
+        const progress = Math.floor((loaded / total) * 100); //當前下載進度
+        const timer = (Date.now() - startTime) / 1000; //已經過時間
         const speed = loaded / timer; 
         
-        // 更新进度信息
+        // 更新進度信息
         if (callbacks && callbacks.updateProgress) {
           callbacks.updateProgress({
             progress,
@@ -130,7 +129,7 @@ async function uploadFileToServer(file, callbacks) {
       }
     });
     if (response.data && response.data.downloadUrl) {
-      // 假设使用 localStorage 来保存下载 URL
+      // localStorage 保存下载URL
       localStorage.setItem('downloadUrl', response.data.downloadUrl);
       localStorage.setItem('originalFilename', response.data.originalFilename);
       console.log('File uploaded successfully, download URL saved.');
@@ -143,7 +142,6 @@ async function uploadFileToServer(file, callbacks) {
 }
 
 /*----------- UpFile動作觸發上傳 ------------*/
-
   // 處理drop事件event對象
 export function handleDrop(active, emit ,callbacks) {
   return async function(event) {
@@ -156,9 +154,7 @@ export function handleDrop(active, emit ,callbacks) {
     active.value = !active.value;
   }
 }
-
-// 切換狀態
-  // 選擇文件時觸發
+// 選擇文件時觸發
 export function onFileChange(emit, callbacks) {
   return async function(event) {
     if (event.target.files.length) {
@@ -168,15 +164,15 @@ export function onFileChange(emit, callbacks) {
     }
   }
 }
-
-// 初始化状态
+/*----------- 獲取進度參數狀態 ------------*/
+// 初始化
 export const schedule = ref(0);
 export const loaded = ref(0);
 export const total = ref(0);
 export const timer = ref(0);
 export const speed = ref(0);
 
-// 重置进度和其他状态的函数
+// 重置进度
 export function resetProgress() {
   schedule.value = 0;
   loaded.value = 0;
@@ -185,7 +181,7 @@ export function resetProgress() {
   speed.value = 0;
 }
 
-// 更新进度和其他状态的函数
+// 更新進度
 export function updateProgress({ progress, loaded: l, total: t, timer: tm, speed: s }) {
   schedule.value = progress;
   loaded.value = l;

@@ -101,7 +101,7 @@ onMounted(() => {
       }else if(width < 500){
         svg.setAttribute("viewBox", "0 0 120 30"); 
       }else {
-        svg.setAttribute("viewBox", "0 0 120 20"); // 默认值
+        svg.setAttribute("viewBox", "0 0 120 20"); 
       }
     }
   };
@@ -124,15 +124,15 @@ justify-content: center;
 }
 
 .RadialProgress {
---hue: 215;       /*進度條色調*/
---holesize: 60%;  /* 進度條寬度 */
---track-bg: hsl(233 34% 92%);  /*進度條背景顏色*/
+--hue: 215;       
+--holesize: 60%; 
+--track-bg: hsl(233 34% 92%);  
 
-block-size: 40vmin;       /* 设置进度条的尺寸 */
+block-size: 40vmin;       
 inline-size: 40vmin;
 min-inline-size: 90px;
 min-block-size: 90px;
-display: grid;            /*  CSS Grid 布局将内容居中 */
+display: grid;            
 place-items: center;
 
 position: relative;
@@ -156,8 +156,8 @@ font-size: max(6.5vmin, 1.4rem);
     );
     
     mask-image: radial-gradient(      /* 中心空白圓環 */
-    transparent var(--holesize),    /*中心*/
-    black calc(var(--holesize) + 0.5px)  /*外圍*/
+    transparent var(--holesize),    
+    black calc(var(--holesize) + 0.5px)  
     );
   }
 }
@@ -265,7 +265,7 @@ animation-direction: alternate;
   margin-bottom: 100px;
 }
 .download-info li {
-  position: relative; /* 使得伪元素可以相对于此元素定位 */
+  position: relative; 
   padding: 10px 0;
 }
 
@@ -275,11 +275,11 @@ animation-direction: alternate;
   left: 0%; 
   right: 0%; 
   top: 0; 
-  border-top: 2px solid #ddddddd7; /* 边框样式 */
+  border-top: 2px solid #ddddddd7; 
 }
 
 .download-info li:first-child::before {
-  border-top: none; /* 第一个元素不显示顶部边框 */
+  border-top: none; 
 }
 
 
@@ -358,9 +358,9 @@ svg {
   }
 }
 @keyframes wave {
-  to {transform: translateX(-100%);}  /*向左100%*/
+  to {transform: translateX(-100%);}  
 }
 @keyframes ball {
-  to {transform: translateY(20%);}   /*向上移动20%*/
+  to {transform: translateY(20%);}   
 }
 </style>

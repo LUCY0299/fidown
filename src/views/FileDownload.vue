@@ -1,14 +1,11 @@
 <template>
     <div class="container">
-      <FileFront />
-      <h3>本機上傳檔案給用戶下載⬇</h3>
       <DataBar />
-      <button @click="toProgressBar" style="margin-bottom: 10px;">ProgressBar</button>
+      <button @click="toProgressBar" style="margin-bottom: 10px;">Click to Download</button>
     </div>
 </template>
 
 <script setup>
-import FileFront from '@/components/FileFront.vue';
 import DataBar from '@/components/DataBar.vue';
 
 import { useRouter } from 'vue-router';

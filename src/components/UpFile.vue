@@ -15,8 +15,6 @@
         class="dropzoneFile" 
         @change="onFileChangeFunc"/>
     </div>                                                      
-                                                                 <!-- 用戶選擇文件後觸發 -->                 
-
     <div class="download-info">
         <li><b>Loaded:</b> {{ (loaded / 1000 / 1000).toFixed(2) }} MB</li>
         <li><b>Total:</b> {{ (total / 1000 / 1000).toFixed(2) }} MB</li>
@@ -30,7 +28,7 @@ import { ref, defineEmits } from "vue"
 import { handleDrop,onFileChange } from '@/router/index.js';
 import { loaded, total, timer, speed, resetProgress, updateProgress } from '@/router/index.js';
 
-  //追蹤拖拽區域是否激活
+  //追蹤拖拽區域是否觸發
 const emit = defineEmits(['fileDropped'])
 
 const active = ref(false)  
@@ -80,13 +78,13 @@ const onFileChangeFunc = onFileChange(emit, callbacks);
 
 /* download-info */
 .download-info{
-  list-style-type: none; /* 禁用列表項目前的圓點 */
+  list-style-type: none; 
   text-align: center;
   margin-top: 20px;
   margin-bottom: 100px;
 }
 .download-info li {
-  position: relative; /* 使得伪元素可以相对于此元素定位 */
+  position: relative; 
   padding: 10px 0;
 }
 
@@ -96,7 +94,7 @@ const onFileChangeFunc = onFileChange(emit, callbacks);
   left: 0%; 
   right: 0%; 
   top: 0; 
-  border-top: 2px solid #c4c0c0ea; /* 边框样式 */
+  border-top: 2px solid #c4c0c0ea;
 }
 
 .download-info li:first-child::before {

@@ -91,11 +91,11 @@ justify-content: center;
 --holesize: 60%;  /* 進度條寬度 */
 --track-bg: hsl(233 34% 92%);  /*進度條背景顏色*/
 
-block-size: 40vmin;       /* 设置进度条的尺寸 */
+block-size: 40vmin;       /* 進度條的尺寸 */
 inline-size: 40vmin;
 min-inline-size: 90px;
 min-block-size: 90px;
-display: grid;            /*  CSS Grid 布局将内容居中 */
+display: grid;          
 place-items: center;
 
 position: relative;
@@ -111,7 +111,7 @@ font-size: max(6.5vmin, 1.4rem);
     right: 0;
     border-radius: 50%;
     z-index: -1;
-    background: conic-gradient(       /* 圆锥渐变创建圆形进度的效果 */
+    background: conic-gradient(       /* 圆形进度的效果 */
     hsl(var(--hue) 100% 70%),
     hsl(var(--hue) 100% 40%),
     hsl(var(--hue) 100% 70%) var(--schedule, 0%),
@@ -124,6 +124,7 @@ font-size: max(6.5vmin, 1.4rem);
     );
   }
 }
+
 /* Button */
 .wrap{
   display: flex;
@@ -219,6 +220,7 @@ animation-direction: alternate;
     height: 375px;
 }
 }
+
 /* download-info */
 .download-info{
   text-align: center;
@@ -226,7 +228,7 @@ animation-direction: alternate;
   margin-bottom: 100px;
 }
 .download-info li {
-  position: relative; /* 使得伪元素可以相对于此元素定位 */
+  position: relative;
   padding: 10px 0;
 }
 
@@ -236,7 +238,7 @@ animation-direction: alternate;
   left: 0%; 
   right: 0%; 
   top: 0; 
-  border-top: 2px solid #ddddddd7; /* 边框样式 */
+  border-top: 2px solid #ddddddd7; 
 }
 
 .download-info li:first-child::before {
